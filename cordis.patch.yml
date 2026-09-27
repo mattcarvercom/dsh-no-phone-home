@@ -1,0 +1,43 @@
+# dsh-no-phone-home bundle patch: disables every shipped row that sends data
+# off this machine for DeepSeek's diagnostics, or records data only so it can
+# be sent later. Patches target ids only, never `name`: a name-pinned patch is
+# skipped when upstream moves an id to a new package, which would re-enable
+# the row silently. Ids an older dsh release lacks are skipped with a "not
+# found" warning. `npm test` and `npm run check` fail if a denied package moves
+# to a new id or a new telemetry-shaped row appears.
+
+# Shared OTLP transport (the only transport session and product telemetry use).
+- id: otel
+  disabled: true
+
+# Session-log prefixes exported to dsh-otel-collector.deepseeksvc.com when the
+# user leaves feedback (FEEDBACK_ONLY is the shipped default mode).
+- id: session-telemetry-otel
+  disabled: true
+
+# `dsh_session_log`: an incremental copy of the session log attached to every
+# official DeepSeek API request.
+- id: session-log-deepseek
+  disabled: true
+
+# `dsh_plugin_packages`: the active plugin inventory attached to every
+# official DeepSeek API request.
+- id: plugin-package-inventory-deepseek
+  disabled: true
+
+# Desktop product analytics and its OTLP exporter (gated to the desktop
+# profile upstream; disabled here unconditionally).
+- id: desktop-product-telemetry
+  disabled: true
+- id: product-analytics
+  disabled: true
+
+# Feedback capture (`/feedback`, message ratings and notes). The records exist
+# to authorize and feed the OTel upload above; without it they would only
+# accumulate for a later shipment.
+- id: command-feedback
+  disabled: true
+- id: message-feedback
+  disabled: true
+- id: ui-message-feedback
+  disabled: true
