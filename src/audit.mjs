@@ -9,7 +9,7 @@
  * @module dsh-no-phone-home/audit
  */
 
-import { existsSync, readFileSync, realpathSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { delimiter, dirname, join } from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -84,6 +84,39 @@ export function resolveManifest(anchorDir, name) {
     if (existsSync(candidate)) return realpathSync(candidate)
   }
   throw new Error(`cannot resolve ${name} from ${anchorDir}`)
+}
+
+/**
+ * Resolve a bundle manifest: the profile's module paths first, then the dsh
+ * checkout's workspace packages. Official bundles (such as the experimental
+ * plugin-market) live in the checkout and the launcher resolves them through
+ * its runtime resolution, not the profile's node_modules.
+ * @param anchorDir - directory whose node_modules resolution to use.
+ * @param name - bundle package name.
+ * @param dshDir - the @deepseek-ai/dsh package directory (a checkout's apps/cli).
+ * @returns the bundle's real manifest path.
+ */
+export function resolveBundleManifest(anchorDir, name, dshDir) {
+  try {
+    return resolveManifest(anchorDir, name)
+  } catch (error) {
+    if (dshDir === undefined) throw error
+    const root = dirname(dirname(dshDir))
+    const groups = join(root, 'packages')
+    if (existsSync(groups)) {
+      for (const group of readdirSync(groups, { withFileTypes: true })) {
+        if (!group.isDirectory()) continue
+        const groupDir = join(groups, group.name)
+        for (const entry of readdirSync(groupDir, { withFileTypes: true })) {
+          if (!entry.isDirectory()) continue
+          const manifest = join(groupDir, entry.name, 'package.json')
+          if (!existsSync(manifest)) continue
+          if (JSON.parse(readFileSync(manifest, 'utf8')).name === name) return realpathSync(manifest)
+        }
+      }
+    }
+    throw error
+  }
 }
 
 /**
@@ -206,7 +239,7 @@ export async function auditProfile(profileDir, { telemetryDisabledEnv, dshDir = 
   const tools = await loadIncludeTools(dshDir)
   const profile = JSON.parse(readFileSync(join(profileDir, 'package.json'), 'utf8'))
   const bundles = profile.dsh?.profile?.bundles ?? []
-  const layers = bundles.map(name => readBundleLayer(tools, resolveManifest(profileDir, name)))
+  const layers = bundles.map(name => readBundleLayer(tools, resolveBundleManifest(profileDir, name, dshDir)))
   // The profile's own patch (what the Plugins page writes), then the home-level
   // patch ($DSH_HOME/cordis.patch.yml), in the launcher's order.
   const optional = (file) => {
