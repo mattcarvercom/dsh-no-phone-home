@@ -47,7 +47,7 @@ Both find dsh through the `dsh` on your PATH. Set `DSH_PACKAGE_DIR` to an instal
 
 `npm test` checks the patch against the `base` and `web-app` bundles of your installed dsh. It fails if a denied package moved to a new row id, if the patch stops being id-only, or if the composed result isn't clean. It also confirms the audit really catches the shipped defaults, a later re-enable, and a new telemetry-shaped row.
 
-Tested with dsh 0.1.7-rc.2 from npm and with a source checkout 155 commits past it, on Node 25 and 26.
+Tested with dsh 0.2.2-alpha.2 from a source checkout (`600c8ea`), on Node 24.11.1.
 
 ## License
 
