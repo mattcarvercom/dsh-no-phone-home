@@ -122,13 +122,12 @@ export function resolveBundleManifest(anchorDir, name, dshDir) {
 /**
  * Load dsh's patch applier and YAML schema from the installed dsh package.
  * @param dshDir - the @deepseek-ai/dsh package directory.
- * @returns the include module's applyEntryPatches, entryListSchema, and js-yaml.
+ * @returns the include module's applyEntryPatches and Entry YAML parser.
  */
 export async function loadIncludeTools(dshDir = locateDshPackage()) {
   const includeDir = dirname(resolveManifest(dshDir, '@deepseek-ai/cordis-plugin-include'))
   const include = await import(pathToFileURL(join(includeDir, 'lib/index.js')).href)
-  const yaml = createRequire(join(includeDir, 'package.json'))('js-yaml')
-  return { applyEntryPatches: include.applyEntryPatches, entryListSchema: include.entryListSchema, yaml }
+  return { applyEntryPatches: include.applyEntryPatches, parseEntryYaml: include.parseEntryYaml }
 }
 
 /**
@@ -138,7 +137,7 @@ export async function loadIncludeTools(dshDir = locateDshPackage()) {
  * @returns the patch list (empty for an empty file).
  */
 export function readPatchFile(tools, file) {
-  const parsed = tools.yaml.load(readFileSync(file, 'utf8'), { schema: tools.entryListSchema })
+  const parsed = tools.parseEntryYaml(readFileSync(file, 'utf8'))
   if (parsed === undefined || parsed === null) return []
   if (!Array.isArray(parsed)) throw new Error(`${file} must be a top-level list of patches`)
   return parsed
