@@ -1,8 +1,14 @@
 {
   "name": "dsh-no-phone-home",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stops DeepSeek Harness from phoning home: disables every row that exports telemetry, attaches diagnostics to model requests, or records feedback for later upload",
-  "keywords": ["dsh-plugin", "deepseek-harness", "telemetry", "privacy", "opentelemetry"],
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "telemetry",
+    "privacy",
+    "opentelemetry"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mattcarvercom/dsh-no-phone-home.git"
@@ -24,5 +30,8 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "engines": {
+    "dsh": ">=0.2.2-rc.3 <0.2.3"
   }
 }
