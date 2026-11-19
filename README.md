@@ -25,7 +25,7 @@ Patches target row ids only. A patch that also names the package is skipped when
 ## Install
 
 ```sh
-dsh plugin --profile web add github:mattcarvercom/dsh-no-phone-home#v1.0.1
+dsh plugin --profile web add github:mattcarvercom/dsh-no-phone-home#v1.0.2
 ```
 
 This installs the bundle and adds it to the profile's bundle list. With HMR active (the default for `web`), it applies to a running `dsh web` without a restart; otherwise restart dsh. You can also toggle it from the Plugins page.
@@ -51,10 +51,10 @@ Both find dsh through the `dsh` on your PATH. Set `DSH_PACKAGE_DIR` to an instal
 
 | | |
 |---|---|
-| Declared range | `engines.dsh: >=0.2.2-rc.3 <0.2.3` |
-| Tested dsh | 0.2.2-rc.3 (upstream `39163dd30f`, fork checkout `a6d0333c73`) |
+| Declared range | `engines.dsh: >=0.2.2-rc.5 <0.2.3` |
+| Tested dsh | 0.2.2-rc.5 (upstream `2e39e70496`, fork checkout `3469d958a5`) |
 | Node | 22.19+ or 24+ as dsh requires; tested on 25.8.0 |
-| Plugin release | `v1.0.1` |
+| Plugin release | `v1.0.2` |
 
 dsh refuses to install or start this plugin when the running version is outside the declared range (`incompatible-version`), and its boot preflight disables the row with a warning. Crossing that boundary needs a newer plugin release; `dsh plugin allow-version PLUGIN@VERSION --dsh-version VERSION --accept-risk` is the explicit per-version override.
 

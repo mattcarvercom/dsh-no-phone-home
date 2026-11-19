@@ -1,6 +1,6 @@
 {
   "name": "dsh-no-phone-home",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Stops DeepSeek Harness from phoning home: disables every row that exports telemetry, attaches diagnostics to model requests, or records feedback for later upload",
   "keywords": [
     "dsh-plugin",
@@ -32,6 +32,6 @@
     }
   },
   "engines": {
-    "dsh": ">=0.2.2-rc.3 <0.2.3"
+    "dsh": ">=0.2.2-rc.5 <0.2.3"
   }
 }

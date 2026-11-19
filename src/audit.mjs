@@ -173,10 +173,10 @@ export function compose(tools, layers, { telemetryDisabledEnv } = {}) {
   // applyEntryPatches inserts rows by reference and later patches mutate them,
   // so compose over a copy: the caller's layers stay reusable.
   const patches = structuredClone(layers.flat())
-  let entries = tools.applyEntryPatches([], patches, warn)
+  let entries = tools.applyEntryPatches([], patches, warn).data
   const hasRow = flatten(entries).some(row => row.entry.id === TELEMETRY_ROW_ID)
   if ((telemetryDisabledEnv ?? '') !== '' && hasRow) {
-    entries = tools.applyEntryPatches([], [...structuredClone(layers.flat()), { id: TELEMETRY_ROW_ID, disabled: true }], () => {})
+    entries = tools.applyEntryPatches([], [...structuredClone(layers.flat()), { id: TELEMETRY_ROW_ID, disabled: true }], () => {}).data
   }
   return { entries, warnings }
 }
